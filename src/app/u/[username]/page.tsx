@@ -7,7 +7,6 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { toast } from "sonner";
-import { fa } from "zod/v4/locales";
 
 export default function PublicProfilePage() {
   const params = useParams<{ username: string }>();
@@ -44,6 +43,7 @@ export default function PublicProfilePage() {
       }
     } catch (error) {
       const axiosError = error as AxiosError<{ message: string }>;
+      // Backend agar 403 status (isAcceptingMessages: false) bhejega, toh exact reason yahan toast banega
       toast.error(
         axiosError.response?.data?.message || "Failed to send message",
       );
