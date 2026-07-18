@@ -1,0 +1,27 @@
+[
+    {
+        "title": "Project Update: Authentication Flow",
+        "content": "Successfully implemented JWT-based authentication middleware and integrated the signup/login controllers using Node.js and Express.",
+        "received": true
+    },
+    {
+        "title": "Frontend Setup with Tailwind CSS",
+        "content": "Initialized the React frontend application using Vite, configured Tailwind CSS, and successfully built the structural components for the Register and Login pages.",
+        "received": true
+    },
+    {
+        "title": "Database Schema Optimization",
+        "content": "Designed and verified Mongoose schemas for User, Video, and Subscription collections, establishing robust relations for full-stack data integrity.",
+        "received": true
+    },
+    {
+        "title": "Cloudinary Media Integration",
+        "content": "Configured the backend system to handle multi-part form data uploads for profile pictures and cover photos, securely sending them directly to Cloudinary storage.",
+        "received": true
+    },
+    {
+        "title": "Interview Preparation Plan",
+        "content": "Drafted a targeted 4-month preparation strategy focusing heavily on advanced JavaScript concepts, data structures, algorithms, and full-stack system architectures.",
+        "received": false
+    }
+]
