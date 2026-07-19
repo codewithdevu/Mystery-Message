@@ -2,22 +2,21 @@
 
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
-import { Message} from "@/model/user.model";
+import { Message } from "@/model/user.model";
 import { acceptMessageSchema } from "@/schemas/acceptMessageSchema";
 import { ApiResponse } from "@/types/ApiResponse";
 import { zodResolver } from "@hookform/resolvers/zod";
-import axios, { Axios, AxiosError } from "axios";
+import axios, { AxiosError } from "axios";
 import { useSession } from "next-auth/react";
 import { Separator } from "@/components/ui/separator";
 import { useCallback, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
-import { useCopyToClipboard } from "usehooks-ts";
 import { Loader2, RefreshCcw } from "lucide-react";
 import MessageCard from "@/components/MessageCard";
 import { User } from "next-auth";
 
-const page = () => {
+const DashboardPage = () => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isSwitchLoading, setIsSwitchLoading] = useState(false);
@@ -30,20 +29,23 @@ const page = () => {
 
   const form = useForm({
     resolver: zodResolver(acceptMessageSchema),
+    defaultValues: {
+      acceptMessages: false,
+    },
   });
 
   const { register, watch, setValue } = form;
-
   const acceptMessages = watch("acceptMessages");
 
   const fetchAcceptMessage = useCallback(async () => {
     setIsSwitchLoading(true);
     try {
-      const response = await axios.get<ApiResponse>("/api/accept-meessages");
-      setValue("acceptMessages", response.data.isAcceptingMessage!);
+      const response = await axios.get<ApiResponse>("/api/accept-messages");
+      // Fallback binding handles multiple casing styles safely
+      const statusValue = response.data.isAcceptingMessage ?? (response.data as any).isAcceptingMessages;
+      setValue("acceptMessages", !!statusValue);
     } catch (error) {
       const axiosError = error as AxiosError<ApiResponse>;
-      toast.success("Error");
       toast.error(
         axiosError.response?.data?.message ||
           "Failed to fetch message settings",
@@ -56,7 +58,6 @@ const page = () => {
   const fetchMessage = useCallback(
     async (refresh: boolean = false) => {
       setIsLoading(true);
-      setIsSwitchLoading(false);
       try {
         const response = await axios.get<ApiResponse>("/api/get-messages");
         setMessages(response.data.messages || []);
@@ -65,58 +66,68 @@ const page = () => {
         }
       } catch (error) {
         const axiosError = error as AxiosError<ApiResponse>;
-        toast.success("Error");
         toast.error(
           axiosError.response?.data?.message ||
-            "Failed to fetch message settings",
+            "Failed to fetch messages",
         );
       } finally {
-        setIsSwitchLoading(false);
         setIsLoading(false);
       }
     },
-    [setIsLoading, setMessages],
+    [setMessages],
   );
 
   useEffect(() => {
     if (!session || !session.user) return;
     fetchMessage();
     fetchAcceptMessage();
-  }, [session, setValue, fetchAcceptMessage, fetchMessage]);
+  }, [session, fetchAcceptMessage, fetchMessage]);
 
-  // hnadle switch change
+  // Handle switch change
   const handleSwitchChange = async () => {
+    setIsSwitchLoading(true);
     try {
+      const nextState = !acceptMessages;
+      
+      // 💡 THE CURE: Key parameter updated to match backend destructuring variable 'acceptedMessages'
       const response = await axios.post<ApiResponse>("/api/accept-messages", {
-        acceptMessages: !acceptMessages,
+        acceptedMessages: nextState,
       });
 
-      setValue("acceptMessages", !acceptMessages);
-      toast.success(response.data.message);
+      setValue("acceptMessages", nextState);
+      toast.success(response.data.message || "Settings updated");
     } catch (error) {
       const axiosError = error as AxiosError<ApiResponse>;
-      toast.success("Error");
       toast.error(
         axiosError.response?.data?.message ||
-          "Failed to fetch message settings",
+          "Failed to update message settings",
       );
+    } finally {
+      setIsSwitchLoading(false);
     }
   };
 
-  const {username} = session?.user as User
-  
-  const baseUrl = `${window.location.protocol}//${window.location.host}`
+  const { username } = session?.user || ({} as User);
 
-  const profileUrl = `${baseUrl}/u/${username }`
+  const baseUrl =
+    typeof window !== "undefined"
+      ? `${window.location.protocol}//${window.location.host}`
+      : "";
+
+  const profileUrl = baseUrl && username ? `${baseUrl}/u/${username}` : "";
 
   const copyToClipboard = () => {
-    navigator.clipboard.writeText(profileUrl)
-    toast.success("Url copied")
-    
-  }
+    if (!profileUrl) return;
+    navigator.clipboard.writeText(profileUrl);
+    toast.success("URL copied to clipboard!");
+  };
 
   if (!session || !session.user) {
-    return <div>Please login</div>;
+    return (
+      <div className="flex justify-center items-center min-h-screen">
+        Please login
+      </div>
+    );
   }
 
   return (
@@ -124,20 +135,19 @@ const page = () => {
       <h1 className="text-4xl font-bold mb-4">User Dashboard</h1>
 
       <div className="mb-4">
-        <h2 className="text-4xl font-semibold mb-2">Copy Your Unique Link</h2>
+        <h2 className="text-xl font-semibold mb-2">Copy Your Unique Link</h2>
         <div className="flex items-center">
           <input
             type="text"
             value={profileUrl}
             disabled
-            className="input input-bordered w-full p-2 mr-2"
+            className="input input-bordered w-full p-2 mr-2 border rounded"
           />
-          {/* Make sure copyToClipboard is a function initialized at the top, not the hook itself */}
-          <Button onClick={useCopyToClipboard}>Copy</Button>
+          <Button onClick={copyToClipboard}>Copy</Button>
         </div>
       </div>
 
-      <div className="mb-4">
+      <div className="mb-4 flex items-center gap-2">
         <Switch
           {...register("acceptMessages")}
           checked={acceptMessages}
@@ -148,6 +158,7 @@ const page = () => {
           Accept Messages: {acceptMessages ? "On" : "Off"}
         </span>
       </div>
+      
       <Separator />
 
       <Button
@@ -157,6 +168,7 @@ const page = () => {
           e.preventDefault();
           fetchMessage(true);
         }}
+        disabled={isLoading}
       >
         {isLoading ? (
           <Loader2 className="h-4 w-4 animate-spin" />
@@ -169,7 +181,7 @@ const page = () => {
         {messages && messages.length > 0 ? (
           messages.map((message) => (
             <MessageCard
-              key={message._id}
+              key={message._id as string}
               message={message}
               onMessageDelete={handleDeleteMessage}
             />
@@ -182,4 +194,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default DashboardPage;

@@ -33,9 +33,14 @@ const MessageCard = ({ message, onMessageDelete }: MessageCardProps) => {
 
     const handleDeleteConfirm = async () => {
       try {
-        const response = await axios.delete<ApiResponse>(`/api/delete-message/${message._id}`);
+        // Safe conversion to string to ensure dynamic segment route binding doesn't distort URL
+        const msgId = String(message._id);
+        
+        // Target dynamic route: /api/delete-message/[messageid]
+        const response = await axios.delete<ApiResponse>(`/api/delete-message/${msgId}`);
+        
         toast.success(response.data.message || "Message deleted successfully");
-        onMessageDelete(message._id);
+        onMessageDelete(msgId);
       } catch (error) {
         toast.error("Failed to delete message");
       }
@@ -45,7 +50,6 @@ const MessageCard = ({ message, onMessageDelete }: MessageCardProps) => {
     <Card className="relative">
       <CardHeader className="flex flex-row items-start justify-between space-y-0">
         <div className="flex flex-col space-y-1.5">
-          {/* ✅ Renders dynamic message text dynamically */}
           <CardTitle className="text-lg font-semibold">{message.content}</CardTitle>
           <CardDescription>
             {new Date(message.createdAt).toLocaleDateString()}

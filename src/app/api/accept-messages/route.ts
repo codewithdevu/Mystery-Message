@@ -8,7 +8,6 @@ export async function POST(request: Request) {
   await dbconnect();
 
   const session = await getServerSession(authOptions);
-
   const user = session?.user as User;
 
   if (!session || !session.user) {
@@ -27,7 +26,8 @@ export async function POST(request: Request) {
   try {
     const updatedUser = await UserModel.findByIdAndUpdate(
       userId,
-      { isAcceptedMessages: acceptedMessages },
+      // 💡 THE CURE: Updated the exact schema key name here
+      { isAcceptingMessage: acceptedMessages },
       { new: true },
     );
 
@@ -65,7 +65,6 @@ export async function GET(request: Request) {
   await dbconnect();
 
   const session = await getServerSession(authOptions);
-
   const user = session?.user as User;
 
   if (!session || !session.user) {
@@ -96,7 +95,8 @@ export async function GET(request: Request) {
     return Response.json(
       {
         success: true,
-        isAcceptingMessages: foundUser.isAcceptingMessage,
+        // Frontend ko isAcceptingMessages hi chahiye, mapping bilkul sahi hai
+        isAcceptingMessages: foundUser.isAcceptingMessage, 
       },
       { status: 200 },
     );

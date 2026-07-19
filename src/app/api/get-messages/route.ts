@@ -1,23 +1,18 @@
-import { getServerSession } from "next-auth";
-import { authOptions } from "../auth/[...nextauth]/options";
 import dbConnect from "@/lib/db.connect";
 import UserModel from "@/model/user.model";
-import { User } from "next-auth";
 import mongoose from "mongoose";
+import { getServerSession, User } from "next-auth";
+import { authOptions } from "../auth/[...nextauth]/options";
 
 export async function GET(request: Request) {
   await dbConnect();
 
   const session = await getServerSession(authOptions);
-
   const user = session?.user as User;
 
   if (!session || !session.user) {
     return Response.json(
-      {
-        success: false,
-        message: "Unauthorized",
-      },
+      { success: false, message: "Unauthorized" },
       { status: 401 },
     );
   }
@@ -25,12 +20,16 @@ export async function GET(request: Request) {
   const userId = new mongoose.Types.ObjectId(user._id);
 
   try {
-    const user = await UserModel.aggregate([
+    const userResult = await UserModel.aggregate([
       {
         $match: { _id: userId },
       },
       {
-        $unwind: "$messages",
+        // 💡 THE FIX: preserveNullAndEmptyArrays true karne se empty array parse ho jayega
+        $unwind: {
+          path: "$messages",
+          preserveNullAndEmptyArrays: true
+        }
       },
       {
         $sort: { "messages.createdAt": -1 },
@@ -38,17 +37,24 @@ export async function GET(request: Request) {
       {
         $group: {
           _id: "$_id",
-          messages: { $push: "$messages" },
+          // Empty state handling array elements filtering wrapper safely
+          messages: { 
+            $push: {
+              $cond: {
+                if: { $eq: ["$messages", {}] }, // check if structural object empty
+                then: "$$REMOVE",
+                else: "$messages"
+              }
+            } 
+          },
         },
       },
     ]);
 
-    if (!user || user.length === 0) {
+    // Agar real me hi user unique ID database me nahi mili tabhi 404 aayega
+    if (!userResult || userResult.length === 0) {
       return Response.json(
-        {
-          success: false,
-          message: "User not found",
-        },
+        { success: false, message: "User not found" },
         { status: 404 },
       );
     }
@@ -56,18 +62,16 @@ export async function GET(request: Request) {
     return Response.json(
       {
         success: true,
-        messages: user[0].messages,
+        // userResult[0].messages agar null array setup elements pull up karega toh empty array fallback trigger ho jayega
+        messages: userResult[0].messages.filter(Boolean).length > 0 ? userResult[0].messages : [],
       },
       { status: 200 },
     );  
 
   } catch (error) {
     return Response.json(
-      {
-        success: false,
-        message: "Error fetching messages",
-      },
+      { success: false, message: "Error fetching messages" },
       { status: 500 },
     );
-   }
+  }
 }
