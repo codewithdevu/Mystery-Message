@@ -1,51 +1,38 @@
-import { getServerSession } from "next-auth";
+import { getServerSession } from "next-auth/next";
 import { authOptions } from "../../auth/[...nextauth]/options";
 import dbConnect from "@/lib/db.connect";
 import UserModel from "@/model/user.model";
 import { User } from "next-auth";
-
-type RouteParams = {
-  params: {
-    messageid: string;
-  };
-};
+import { NextRequest } from "next/server";
 
 export async function DELETE(
-  request: Request,
-  { params }: RouteParams
+  request: NextRequest,
+  { params }: { params: Promise<{ messageid: string }> }
 ) {
+  // 💡 NEXT.JS 15+ FIX: params ko await karna zaroori hai
+  const { messageid } = await params;
+
   await dbConnect();
-
-  // 💡 NEXT.JS DYNAMIC FIX: Promise behavior bypass framework alignment
-  const resolvedParams = await Promise.resolve(params);
-  const messageId = resolvedParams?.messageid;
-
-  if (!messageId) {
-    return Response.json(
-      { success: false, message: "Message ID parameter is missing" },
-      { status: 400 }
-    );
-  }
 
   const session = await getServerSession(authOptions);
   const user = session?.user as User;
 
-  if (!session || !user) {
+  if (!session || !session.user) {
     return Response.json(
-      { success: false, message: "Unauthorized access" },
+      { success: false, message: "Unauthorized" },
       { status: 401 }
     );
   }
 
   try {
-    const updatedResult = await UserModel.updateOne(
+    const updateResult = await UserModel.updateOne(
       { _id: user._id },
-      { $pull: { messages: { _id: messageId } } }
+      { $pull: { messages: { _id: messageid } } }
     );
 
-    if (updatedResult.modifiedCount === 0) {
+    if (updateResult.modifiedCount === 0) {
       return Response.json(
-        { success: false, message: "Message not found or already deleted from database" },
+        { success: false, message: "Message not found or already deleted" },
         { status: 404 }
       );
     }
@@ -55,9 +42,9 @@ export async function DELETE(
       { status: 200 }
     );
   } catch (error) {
-    console.error("Error in deleting message route execution:", error);
+    console.error("Error deleting message:", error);
     return Response.json(
-      { success: false, message: "Internal server error during deletion" },
+      { success: false, message: "Error deleting message" },
       { status: 500 }
     );
   }
