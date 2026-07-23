@@ -19,7 +19,7 @@ const Home = () => {
       <main className="grow flex flex-col items-center justify-center px-4 md:px-24 py-12">
         <section className="text-center mb-8 md:mb-12">
           <h1 className="text-3xl md:text-5xl font-bold">
-            Dive into the World of Annoymous Conversations
+            Dive into the World of Anonymous Conversations
           </h1>
           <p className="mt-3 md:mt-4 text-base md:text-lg">
             Explore Mystery Message - Where Your identity remains a secret.

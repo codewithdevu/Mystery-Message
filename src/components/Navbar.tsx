@@ -17,7 +17,7 @@ const Navbar = () => {
         {/* LEFT END: Logo */}
         <div className='shrink-0'>
           <Link className='text-xl font-bold text-gray-800' href="/">
-            Mystry Message
+            Mystery Message
           </Link>
         </div>
         
