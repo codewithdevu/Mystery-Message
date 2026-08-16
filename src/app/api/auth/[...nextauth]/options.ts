@@ -3,7 +3,6 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
 import dbConnect from "@/lib/db.connect";
 import UserModel from "@/model/user.model";
-import { error } from "node:console";
 
 export const authOptions: NextAuthOptions = {
   providers: [
@@ -11,61 +10,69 @@ export const authOptions: NextAuthOptions = {
       id: "credentials",
       name: "Credentials",
       credentials: {
-        email: { label: "Username", type: "text " },
+        identifier: { label: "Email/Username", type: "text" },
         password: { label: "Password", type: "password" },
       },
       async authorize(credentials: any): Promise<any> {
+        await dbConnect();
         try {
+          const identifier = credentials?.identifier?.trim();
+          if (!identifier || !credentials?.password) {
+            throw new Error("Please provide all fields");
+          }
+
+          const escapedIdentifier = identifier.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
           const user = await UserModel.findOne({
             $or: [
-              { email: credentials.identifier },
-              { username: credentials.identifier },
+              { email: { $regex: `^${escapedIdentifier}$`, $options: 'i' } },
+              { username: { $regex: `^${escapedIdentifier}$`, $options: 'i' } },
             ],
           });
 
           if (!user) {
-            throw new Error("No user found with this email");
+            throw new Error("No user found with this email or username");
           }
 
           if (!user.isVerified) {
-            throw new Error("Please verify your account before login");
+            throw new Error("Please verify your account before logging in");
           }
 
           const isPasswordCorrect = await bcrypt.compare(
             credentials.password,
-            user.password,
+            user.password
           );
 
           if (isPasswordCorrect) {
             return user;
           } else {
-            throw new Error("Incorrect Password");
+            throw new Error("Incorrect password");
           }
         } catch (err: any) {
-          throw new Error(err);
+          throw new Error(err.message || err);
         }
       },
     }),
   ],
   callbacks: {
-    async jwt({ token, user}) {
-        if (user) {
-           token._id = user._id?.toString()
-           token.isVerified = user.isVerified;
-           token.isAcceptingMessages = user.isAcceptingMessages;
-           token.username = user.username
-        }
+    async jwt({ token, user }) {
+      if (user) {
+        token._id = user._id?.toString();
+        token.isVerified = user.isVerified;
+        token.isAcceptingMessages = user.isAcceptingMessages;
+        token.username = user.username;
+      }
       return token;
     },
-    async session ({session, token}) {
-      if(token){  
-        session.user._id = token._id 
-        session.user.isVerified = token.isVerified
-        session.user.isAcceptingMessages = token.isAcceptingMessages
-        session.user.username = token.username
+    async session({ session, token }) {
+      if (token) {
+        session.user._id = token._id;
+        session.user.isVerified = token.isVerified;
+        session.user.isAcceptingMessages = token.isAcceptingMessages;
+        session.user.username = token.username;
       }
-      return session
-    }
+      return session;
+    },
   },
   pages: {
     signIn: "/sign-in",
