@@ -19,8 +19,6 @@ export default function page() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const router = useRouter();
 
-  // zod implementation
-
   const form = useForm<z.infer<typeof signInSchema>>({
     resolver: zodResolver(signInSchema),
     defaultValues: {
@@ -45,26 +43,27 @@ export default function page() {
   };
 
   return (
-    <div className="flex justify-center items-center min-h-screen bg-gray-100">
-      <div className="w-full max-w-md p-8 space-y-8 bg-white rounded-lg shadow-md">
+    <div className="flex justify-center items-center min-h-screen px-4">
+      <div className="w-full max-w-md p-8 space-y-8 bg-zinc-900 border border-white/[0.08] rounded-xl">
         <div className="text-center">
-          <h1 className="text-4xl font-extrabold tracking-tight lg:text-5xl mb-6">
-            join Mystery Message
+          <h1 className="text-2xl font-semibold tracking-tight text-zinc-50 mb-2">
+            Welcome back
           </h1>
-          <p className="mb-4">Sign in to start your anonymous adventure</p>
+          <p className="text-[14px] text-zinc-500">Sign in to your account</p>
         </div>
         <Form {...form}> 
           <form onSubmit={form.handleSubmit(onSubmit)}
-          className="space-y-6">
+          className="space-y-5">
             <FormField
             name="identifier"
             control={form.control}
             render={({field}) => (
               <FormItem>
-                <FormLabel>Email/Username</FormLabel>
+                <FormLabel className="text-[13px] text-zinc-400">Email or Username</FormLabel>
                 <FormControl>
                   <Input 
-                  placeholder="email/username" {...field} 
+                  placeholder="Enter your email or username" {...field}
+                  className="bg-zinc-800/50 border-white/[0.08] text-zinc-200 placeholder:text-zinc-600 text-[14px] h-10 focus-visible:ring-zinc-600"
                   />
                 </FormControl>
                 <FormMessage />
@@ -76,11 +75,12 @@ export default function page() {
             control={form.control}
             render={({field}) => (
               <FormItem>
-                <FormLabel>Password</FormLabel>
+                <FormLabel className="text-[13px] text-zinc-400">Password</FormLabel>
                 <FormControl>
                   <Input 
                   type="password"
-                  placeholder="password" {...field} 
+                  placeholder="Enter your password" {...field}
+                  className="bg-zinc-800/50 border-white/[0.08] text-zinc-200 placeholder:text-zinc-600 text-[14px] h-10 focus-visible:ring-zinc-600"
                   />
                 </FormControl>
                 <FormMessage />
@@ -89,15 +89,16 @@ export default function page() {
             />
             <Button
             type="submit"
-            disabled={isSubmitting}>
-            signin
+            disabled={isSubmitting}
+            className="w-full bg-zinc-50 text-zinc-900 hover:bg-zinc-200 font-medium text-[14px] h-10">
+            Sign In
             </Button>
           </form>
         </Form>
-        <div className="text-center mt-4">
-          <p>
-            don't have a account? {''}
-            <Link href="/sign-up" className="text-blue-600 hover:text-blue-800">
+        <div className="text-center">
+          <p className="text-[13px] text-zinc-500">
+            Don't have an account?{' '}
+            <Link href="/sign-up" className="text-zinc-300 hover:text-zinc-50 underline underline-offset-4">
             Sign up
             </Link>
           </p>

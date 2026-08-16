@@ -11,35 +11,35 @@ const Navbar = () => {
   const user: User = session?.user as User
 
   return (
-    <nav className='p-4 md:p-6 shadow-md bg-white w-full'>
-      <div className='container mx-auto flex items-center justify-between h-10'>
+    <nav className='border-b border-white/[0.08] bg-[#09090b]'>
+      <div className='container mx-auto flex items-center justify-between h-14 px-4 md:px-6'>
         
-        {/* LEFT END: Logo */}
+        {/* Logo */}
         <div className='shrink-0'>
-          <Link className='text-xl font-bold text-gray-800' href="/">
+          <Link className='text-[15px] font-semibold tracking-tight text-zinc-50' href="/">
             Mystery Message
           </Link>
         </div>
         
-        {/* MIDDLE: Navigation links (Only when logged in) */}
-        <div className='hidden md:flex items-center gap-4 absolute left-1/2 transform -translate-x-1/2'>
+        {/* Center Nav — Desktop */}
+        <div className='hidden md:flex items-center gap-1'>
           {session && (
             <>
               <Link href="/">
-                <Button variant="ghost" size="sm" className='font-medium text-gray-700 hover:text-black'>
+                <Button variant="ghost" size="sm" className='text-[13px] text-zinc-400 hover:text-zinc-50 hover:bg-white/[0.06]'>
                   Home
                 </Button>
               </Link>
               
               <Link href="/dashboard">
-                <Button variant="ghost" size="sm" className='font-medium text-gray-700 hover:text-black'>
+                <Button variant="ghost" size="sm" className='text-[13px] text-zinc-400 hover:text-zinc-50 hover:bg-white/[0.06]'>
                   Dashboard
                 </Button>
               </Link>
               
               {user?.username && (
                 <Link href={`/u/${user.username}`}>
-                  <Button variant="ghost" size="sm" className='font-medium text-gray-700 hover:text-black'>
+                  <Button variant="ghost" size="sm" className='text-[13px] text-zinc-400 hover:text-zinc-50 hover:bg-white/[0.06]'>
                     Send Message
                   </Button>
                 </Link>
@@ -48,37 +48,38 @@ const Navbar = () => {
           )}
         </div>
 
-        {/* RIGHT END: Authentication Actions */}
+        {/* Auth Actions */}
         <div className='shrink-0'>
           {session ? (
             <Button 
-              className='bg-red-500 hover:bg-red-600 text-white font-medium' 
-              size="sm" 
-              onClick={() => signOut()}
+              variant="ghost"
+              size="sm"
+              onClick={() => signOut({ callbackUrl: '/' })}
+              className='text-[13px] text-zinc-400 hover:text-zinc-50 hover:bg-white/[0.06]'
             >
-              Logout
+              Log out
             </Button>
           ) : (
             <Link href="/sign-in">
-              <Button size="sm" className='font-medium'>Login</Button>
+              <Button size="sm" className='text-[13px] bg-zinc-50 text-zinc-900 hover:bg-zinc-200 font-medium h-8 px-3'>Log in</Button>
             </Link>
           )}
         </div>
 
       </div>
 
-      {/* Mobile view spacing compatibility layer */}
+      {/* Mobile Nav */}
       {session && (
-        <div className='flex md:hidden items-center justify-center gap-2 mt-4 border-t pt-2'>
+        <div className='flex md:hidden items-center justify-center gap-1 px-4 pb-3'>
           <Link href="/">
-            <Button variant="ghost" size="xs">Home</Button>
+            <Button variant="ghost" size="sm" className='text-[12px] text-zinc-400 hover:text-zinc-50 h-7 px-2'>Home</Button>
           </Link>
           <Link href="/dashboard">
-            <Button variant="ghost" size="xs">Dashboard</Button>
+            <Button variant="ghost" size="sm" className='text-[12px] text-zinc-400 hover:text-zinc-50 h-7 px-2'>Dashboard</Button>
           </Link>
           {user?.username && (
             <Link href={`/u/${user.username}`}>
-              <Button variant="ghost" size="xs">Send Message</Button>
+              <Button variant="ghost" size="sm" className='text-[12px] text-zinc-400 hover:text-zinc-50 h-7 px-2'>Send Message</Button>
             </Link>
           )}
         </div>

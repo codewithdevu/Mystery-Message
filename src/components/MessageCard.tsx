@@ -47,32 +47,37 @@ const MessageCard = ({ message, onMessageDelete }: MessageCardProps) => {
     };
 
   return (
-    <Card className="relative">
-      <CardHeader className="flex flex-row items-start justify-between space-y-0">
-        <div className="flex flex-col space-y-1.5">
-          <CardTitle className="text-lg font-semibold">{message.content}</CardTitle>
-          <CardDescription>
+    <Card className="bg-zinc-900 border-white/[0.08] group">
+      <CardHeader className="flex flex-row items-start justify-between space-y-0 p-5">
+        <div className="flex flex-col gap-1.5 pr-4">
+          <CardTitle className="text-[14px] font-medium text-zinc-200 leading-relaxed">
+            {message.content}
+          </CardTitle>
+          <CardDescription className="text-[12px] text-zinc-600">
             {new Date(message.createdAt).toLocaleDateString()}
           </CardDescription> 
         </div>
 
         <AlertDialog>
           <AlertDialogTrigger asChild>
-            <Button variant="destructive" size="icon">
-              <X className="w-4 h-4" />
+            <Button 
+              variant="ghost" 
+              size="icon" 
+              className="h-7 w-7 text-zinc-600 hover:text-zinc-300 hover:bg-white/[0.06] opacity-0 group-hover:opacity-100 transition-opacity"
+            >
+              <X className="w-3.5 h-3.5" />
             </Button>
           </AlertDialogTrigger>
-          <AlertDialogContent>
+          <AlertDialogContent className="bg-zinc-900 border-white/[0.08]">
             <AlertDialogHeader>
-              <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
-              <AlertDialogDescription>
-                This action cannot be undone. This will permanently delete your
-                message from our servers.
+              <AlertDialogTitle className="text-zinc-100 text-[15px]">Delete this message?</AlertDialogTitle>
+              <AlertDialogDescription className="text-zinc-500 text-[13px]">
+                This action cannot be undone. The message will be permanently removed.
               </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>
-              <AlertDialogCancel>Cancel</AlertDialogCancel>
-              <AlertDialogAction onClick={handleDeleteConfirm}>Continue</AlertDialogAction>
+              <AlertDialogCancel className="bg-zinc-800 border-white/[0.08] text-zinc-300 hover:bg-zinc-700 hover:text-zinc-100 text-[13px]">Cancel</AlertDialogCancel>
+              <AlertDialogAction onClick={handleDeleteConfirm} className="bg-zinc-50 text-zinc-900 hover:bg-zinc-200 text-[13px]">Delete</AlertDialogAction>
             </AlertDialogFooter>
           </AlertDialogContent>
         </AlertDialog>

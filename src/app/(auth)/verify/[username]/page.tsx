@@ -4,13 +4,13 @@ import { verifySchema } from "@/schemas/verifySchema";
 import * as z from "zod";
 import { useParams, useRouter } from "next/navigation";
 import React from "react";
-import { useForm } from "react-hook-form"; // ✅ Fixed: Removed 'Form' from here
+import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { zodResolver } from "@hookform/resolvers/zod";
 import axios, { AxiosError } from "axios";
 import { ApiResponse } from "@/types/ApiResponse";
 import {
-  Form, // ✅ Fixed: Added shadcn's Form wrapper here
+  Form,
   FormControl,
   FormField,
   FormItem,
@@ -27,7 +27,7 @@ export default function VerifyAccount() {
   const form = useForm<z.infer<typeof verifySchema>>({
     resolver: zodResolver(verifySchema),
     defaultValues: {
-      code: "", // Good practice: initialize your form fields
+      code: "",
     },
   });
 
@@ -39,43 +39,51 @@ export default function VerifyAccount() {
       });
 
       toast.success("Account verified successfully!");
-      router.replace("/sign-in"); // Added leading slash for safety
+      router.replace("/sign-in");
     } catch (error) {
       console.error("Error in verification:", error);
       const axiosError = error as AxiosError<ApiResponse>;
       let errorMessage = axiosError.response?.data.message || "Signup failed. Please try again.";
       
-      // ✅ Fixed toast here to show the real error message instead of 'success'
       toast.error(errorMessage); 
     }
   };
 
   return (
-    <div className="flex justify-center items-center min-h-screen bg-gray-100">
-      <div className="w-full max-w-md p-8 space-y-8 bg-white rounded-lg shadow-md">
+    <div className="flex justify-center items-center min-h-screen px-4">
+      <div className="w-full max-w-md p-8 space-y-8 bg-zinc-900 border border-white/[0.08] rounded-xl">
         <div className="text-center">
-          <h1 className="text-4xl font-extrabold tracking-tight lg:text-5xl mb-6">
-            Verify Your Account
+          <h1 className="text-2xl font-semibold tracking-tight text-zinc-50 mb-2">
+            Verify your account
           </h1>
-          <p className="mb-4">Enter the verification code sent to your email</p>
+          <p className="text-[14px] text-zinc-500">Enter the verification code sent to your email</p>
         </div>
         
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
             <FormField
               control={form.control}
               name="code"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Verification Code</FormLabel>
+                  <FormLabel className="text-[13px] text-zinc-400">Verification Code</FormLabel>
                   <FormControl>
-                    <Input placeholder="code" {...field} />
+                    <Input 
+                      placeholder="Enter code" 
+                      {...field}
+                      className="bg-zinc-800/50 border-white/[0.08] text-zinc-200 placeholder:text-zinc-600 text-[14px] h-10 focus-visible:ring-zinc-600 tracking-widest text-center"
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
-            <Button type="submit">Submit</Button>
+            <Button 
+              type="submit"
+              className="w-full bg-zinc-50 text-zinc-900 hover:bg-zinc-200 font-medium text-[14px] h-10"
+            >
+              Verify
+            </Button>
           </form>
         </Form>
       </div>

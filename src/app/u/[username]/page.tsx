@@ -17,7 +17,6 @@ export default function PublicProfilePage() {
   const [isLoading, setIsLoading] = useState(false);
   const [isSuggestLoading, setIsSuggestLoading] = useState(false);
   
-  // 💡 NEW STATE: Target user configuration status toggle check
   const [isAccepting, setIsAccepting] = useState<boolean | null>(null);
 
   const [suggestedMessages, setSuggestedMessages] = useState<string[]>([
@@ -26,19 +25,16 @@ export default function PublicProfilePage() {
     "What's the best piece of advice you've ever received and how has it impacted your life?",
   ]);
 
-  // 💡 FETCH INITIAL STATUS: User verification logic check on component mount
   useEffect(() => {
     const checkAcceptanceStatus = async () => {
       try {
-        // Assume you have an endpoint like /api/check-accept-status?username=username 
-        // or your current endpoint layout fetches target configuration schemas
         const response = await axios.get(`/api/accept-messages?username=${username}`);
         if (response.data) {
           setIsAccepting(response.data.isAcceptingMessages);
         }
       } catch (error) {
         console.error("Error fetching acceptance validation flags:", error);
-        setIsAccepting(true); // Fallback configuration default parameters safety
+        setIsAccepting(true);
       }
     };
     if (username) checkAcceptanceStatus();
@@ -48,14 +44,13 @@ export default function PublicProfilePage() {
   const HandleSendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // 💡 FRONTEND VALIDATION STEP: Dynamic checks trigger safely
     if (isAccepting === false) {
-      toast.error("Please accept the message option first!");
+      toast.error("This user is not accepting messages right now.");
       return;
     }
 
     if (!messageContent.trim()) {
-      toast.error("Message cannot be Empty");
+      toast.error("Message cannot be empty.");
       return;
     }
 
@@ -73,9 +68,8 @@ export default function PublicProfilePage() {
     } catch (error) {
       const axiosError = error as AxiosError<{ message: string }>;
       
-      // Backend handles fallback responses gracefully (403 errors etc.)
       toast.error(
-        axiosError.response?.data?.message || "Please accept the message option first!"
+        axiosError.response?.data?.message || "This user is not accepting messages right now."
       );
     } finally {
       setIsLoading(false);
@@ -95,7 +89,7 @@ export default function PublicProfilePage() {
         toast.success("New suggestions loaded!");
       }
     } catch (error) {
-      toast.error("Failed to fetch AI suggestions");
+      toast.error("Failed to fetch suggestions");
     } finally {
       setIsSuggestLoading(false);
     }
@@ -104,74 +98,82 @@ export default function PublicProfilePage() {
   // Helper: Click suggestion to populate input box
   const handleMessageClick = (message: string) => {
     if (isAccepting === false) {
-      toast.error("Please accept the message option first!");
+      toast.error("This user is not accepting messages right now.");
       return;
     }
     setMessageContent(message);
   };
 
   return (
-    <div className="container mx-auto my-8 p-6 bg-white rounded max-w-4xl">
-      <h1 className="text-4xl font-bold mb-8 text-center">Public Profile Link</h1>
-
-      {/* Message Input Section */}
-      <form onSubmit={HandleSendMessage} className="space-y-6">
-        <div className="space-y-2">
-          <label className="text-sm font-medium">Send Anonymous Message to @{username}</label>
-          <textarea
-            className="w-full min-h-25 p-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-ring disabled:bg-gray-100 disabled:cursor-not-allowed"
-            placeholder={isAccepting === false ? "This user is currently not accepting any messages." : "Write your anonymous message here..."}
-            value={messageContent}
-            onChange={(e) => setMessageContent(e.target.value)}
-            disabled={isAccepting === false}
-            maxLength={300}
-          />
-        </div>
-        <div className="flex justify-center">
-          <Button 
-            type="submit" 
-            disabled={isLoading || !messageContent.trim() || isAccepting === false}
-          >
-            {isLoading ? 'Sending...' : 'Send It'}
-          </Button>
-        </div>
-      </form>
-
-      <div className="my-8">
-        <Separator />
-      </div>
-
-      {/* AI Suggestions Section */}
-      <div className="space-y-4">
-        <div className="space-y-2">
-          <Button
-            onClick={handleSuggestMessages}
-            disabled={isSuggestLoading || isAccepting === false}
-            variant="outline"
-          >
-            {isSuggestLoading ? 'Suggesting...' : 'Suggest Messages'}
-          </Button>
-          <p className="text-sm text-muted-foreground mt-2">Click on any message below to select it.</p>
+    <div className="min-h-screen py-10 px-4">
+      <div className="max-w-2xl mx-auto space-y-8">
+        {/* Header */}
+        <div className="text-center space-y-2">
+          <h1 className="text-2xl font-semibold tracking-tight text-zinc-50">
+            Send a message to @{username}
+          </h1>
+          <p className="text-[14px] text-zinc-500">
+            Your identity will remain completely anonymous.
+          </p>
         </div>
 
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-lg font-semibold">Messages</CardTitle>
-          </CardHeader>
-          <CardContent className="flex flex-col gap-4">
+        {/* Message Input Section */}
+        <form onSubmit={HandleSendMessage} className="space-y-4">
+          <div className="space-y-2">
+            <label className="text-[13px] font-medium text-zinc-400">Your message</label>
+            <textarea
+              className="w-full min-h-[120px] p-4 bg-zinc-900 border border-white/[0.08] rounded-lg text-[14px] text-zinc-200 placeholder:text-zinc-600 focus:outline-none focus:ring-1 focus:ring-zinc-600 resize-none disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+              placeholder={isAccepting === false ? "This user is currently not accepting messages." : "Write your anonymous message here..."}
+              value={messageContent}
+              onChange={(e) => setMessageContent(e.target.value)}
+              disabled={isAccepting === false}
+              maxLength={300}
+            />
+            <div className="flex items-center justify-between">
+              <span className="text-[11px] text-zinc-600">{messageContent.length}/300</span>
+            </div>
+          </div>
+          <div className="flex justify-center">
+            <Button 
+              type="submit" 
+              disabled={isLoading || !messageContent.trim() || isAccepting === false}
+              className="bg-zinc-50 text-zinc-900 hover:bg-zinc-200 font-medium text-[14px] h-10 px-8"
+            >
+              {isLoading ? 'Sending...' : 'Send Message'}
+            </Button>
+          </div>
+        </form>
+
+        <Separator className="bg-white/[0.06]" />
+
+        {/* Suggestions Section */}
+        <div className="space-y-4">
+          <div className="flex items-center justify-between">
+            <h2 className="text-[15px] font-medium text-zinc-300">Suggested messages</h2>
+            <Button
+              onClick={handleSuggestMessages}
+              disabled={isSuggestLoading || isAccepting === false}
+              variant="ghost"
+              size="sm"
+              className="text-[13px] text-zinc-500 hover:text-zinc-300 hover:bg-white/[0.06]"
+            >
+              {isSuggestLoading ? 'Loading...' : 'Refresh suggestions'}
+            </Button>
+          </div>
+
+          <div className="flex flex-col gap-2">
             {suggestedMessages.map((message, index) => (
-              <Button
+              <button
                 key={index}
-                variant="outline"
-                className="w-full text-left justify-start h-auto whitespace-normal py-3 px-4 border text-sm disabled:opacity-50"
+                className="w-full text-left p-3.5 bg-zinc-900 border border-white/[0.08] rounded-lg text-[13px] text-zinc-400 hover:text-zinc-200 hover:border-white/[0.15] transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
                 onClick={() => handleMessageClick(message)}
                 disabled={isAccepting === false}
               >
                 {message}
-              </Button>
+              </button>
             ))}
-          </CardContent>
-        </Card>
+          </div>
+        </div>
       </div>
     </div>
   );
