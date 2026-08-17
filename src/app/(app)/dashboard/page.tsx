@@ -129,7 +129,6 @@ const DashboardPage = () => {
     setTimeout(() => setCopied(false), 2000);
   };
 
-  // --- Unauthenticated State ---
   if (!session || !session.user) {
     return (
       <div className="min-h-screen flex items-center justify-center p-4">
@@ -172,7 +171,6 @@ const DashboardPage = () => {
           </Button>
         </div>
 
-        {/* Controls Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-4">
           
           {/* Profile Link Card */}

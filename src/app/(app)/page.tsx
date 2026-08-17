@@ -35,7 +35,7 @@ const Home = () => {
             {messages.map((message, index) => (
               <CarouselItem key={index}>
                 <div className="p-1">
-                  <Card className="bg-zinc-900 border-white/[0.08]">
+                  <Card className="bg-zinc-900 border-white/8">
                     <CardHeader className="text-[13px] font-medium text-zinc-400 pb-2">
                       {message.title}
                     </CardHeader>
@@ -53,7 +53,7 @@ const Home = () => {
           <CarouselNext />
         </Carousel>
       </main>
-      <footer className="text-center py-6 text-[13px] text-zinc-600 border-t border-white/[0.06]">
+      <footer className="text-center py-6 text-[13px] text-zinc-600 border-t border-white/6">
         © 2026 Mystery Message
       </footer>
     </>
