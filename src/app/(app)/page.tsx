@@ -1,22 +1,13 @@
 "use client";
 
 import * as React from "react";
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
-} from "@/components/ui/carousel";
-
 import messages from "@/messages.json";
-import Autoplay from "embla-carousel-autoplay";
+import { CardSwipeCarousel } from "@/components/CardSwipeCarousel";
 
 const Home = () => {
   return (
     <>
-      <main className="grow flex flex-col items-center justify-center px-4 md:px-24 py-20">
+      <main className="grow flex flex-col items-center justify-center px-4 md:px-24 py-16 md:py-24">
         <section className="text-center mb-10 md:mb-14 max-w-2xl">
           <h1 className="text-3xl md:text-5xl font-semibold tracking-tight text-zinc-50 leading-tight">
             Anonymous conversations,
@@ -27,33 +18,12 @@ const Home = () => {
             Share your unique link. Receive honest, anonymous messages from anyone.
           </p>
         </section>
-        <Carousel
-          plugins={[Autoplay({ delay: 3000 })]}
-          className="w-full max-w-sm"
-        >
-          <CarouselContent>
-            {messages.map((message, index) => (
-              <CarouselItem key={index}>
-                <div className="p-1">
-                  <Card className="bg-zinc-900 border-white/8">
-                    <CardHeader className="text-[13px] font-medium text-zinc-400 pb-2">
-                      {message.title}
-                    </CardHeader>
-                    <CardContent className="px-6 pb-6">
-                      <span className="text-[14px] text-zinc-300 leading-relaxed">
-                        {message.content}
-                      </span>
-                    </CardContent>
-                  </Card>
-                </div>
-              </CarouselItem>
-            ))}
-          </CarouselContent>
-          <CarouselPrevious />
-          <CarouselNext />
-        </Carousel>
+
+        {/* Skiper UI Card Swipe Carousel */}
+        <CardSwipeCarousel messages={messages} />
       </main>
-      <footer className="text-center py-6 text-[13px] text-zinc-600 border-t border-white/6">
+      
+      <footer className="text-center py-6 text-[13px] text-zinc-600 border-t border-white/5">
         © 2026 Mystery Message
       </footer>
     </>
