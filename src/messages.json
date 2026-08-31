@@ -23,5 +23,25 @@
         "title": "Interview Preparation Plan",
         "content": "Drafted a targeted 4-month preparation strategy focusing heavily on advanced JavaScript concepts, data structures, algorithms, and full-stack system architectures.",
         "received": false
+    },
+    {
+        "title": "System Architecture & Microservices",
+        "content": "Refactored core services to leverage event-driven architecture with Redis pub/sub for real-time notification dispatching.",
+        "received": true
+    },
+    {
+        "title": "Performance & Core Web Vitals",
+        "content": "Optimized bundle size and code-splitting strategy, improving Largest Contentful Paint (LCP) by 45% on mobile devices.",
+        "received": true
+    },
+    {
+        "title": "API Rate Limiting & Security",
+        "content": "Configured IP-based token bucket rate limiters to protect public endpoints against DDoS attempts and brute-force attacks.",
+        "received": true
+    },
+    {
+        "title": "CI/CD Pipeline Automation",
+        "content": "Established automated GitHub Actions workflows with Docker containers for seamless testing, linting, and automated production deployment.",
+        "received": true
     }
 ]

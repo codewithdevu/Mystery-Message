@@ -32,22 +32,22 @@ export const CardSwipeCarousel = ({
 }: CardSwipeCarouselProps) => {
   const customCss = `
     .CardSwipeCarousel_Swiper {
-      padding-bottom: 40px !important;
+      padding-bottom: 44px !important;
       overflow: visible !important;
     }
     .CardSwipeCarousel_Swiper .swiper-slide {
       border-radius: 1.25rem;
       overflow: hidden;
-      box-shadow: 0 20px 30px -10px rgba(0, 0, 0, 0.7);
+      box-shadow: 0 25px 35px -12px rgba(0, 0, 0, 0.85);
     }
     .CardSwipeCarousel_Swiper .swiper-pagination-bullet {
       background: #71717a !important;
-      opacity: 0.5;
+      opacity: 0.4;
     }
     .CardSwipeCarousel_Swiper .swiper-pagination-bullet-active {
       background: #fafafa !important;
       opacity: 1;
-      width: 18px;
+      width: 20px;
       border-radius: 4px;
     }
   `;
@@ -56,8 +56,8 @@ export const CardSwipeCarousel = ({
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.4, delay: 0.2 }}
-      className={cn("relative w-full max-w-md mx-auto flex flex-col items-center justify-center", className)}
+      transition={{ duration: 0.4, delay: 0.1 }}
+      className={cn("relative w-full max-w-lg mx-auto flex flex-col items-center justify-center", className)}
     >
       <style>{customCss}</style>
       <Swiper
@@ -67,7 +67,7 @@ export const CardSwipeCarousel = ({
         autoplay={
           autoplay
             ? {
-                delay: 3500,
+                delay: 3800,
                 disableOnInteraction: false,
               }
             : false
@@ -79,29 +79,29 @@ export const CardSwipeCarousel = ({
           nextEl: ".swiper-button-next-custom",
           prevEl: ".swiper-button-prev-custom",
         }}
-        className="CardSwipeCarousel_Swiper h-[240px] w-[300px] sm:w-[340px]"
+        className="CardSwipeCarousel_Swiper h-[280px] w-[310px] sm:w-[380px] md:w-[410px]"
         modules={[EffectCards, Autoplay, Pagination, Navigation]}
       >
         {messages.map((message, index) => (
           <SwiperSlide key={index}>
-            <div className="h-full w-full bg-zinc-900 border border-white/10 p-6 flex flex-col justify-between select-none relative overflow-hidden backdrop-blur-xl">
-              {/* Card Subtle Top Line Accent */}
-              <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-zinc-400/40 to-transparent" />
+            <div className="h-full w-full bg-zinc-900 border border-white/[0.08] p-7 sm:p-8 flex flex-col justify-between select-none relative">
+              {/* Header Title */}
+              <div className="flex items-center justify-between pb-3 border-b border-white/[0.06]">
+                <span className="text-[12px] font-mono tracking-wide text-zinc-400 font-medium">
+                  {message.title}
+                </span>
+              </div>
               
-              <div>
-                <div className="flex items-center justify-between mb-3">
-                  <span className="text-[11px] font-mono tracking-wider text-zinc-500 uppercase font-semibold">
-                    {message.title}
-                  </span>
-                  <span className="h-2 w-2 rounded-full bg-emerald-500/80 animate-pulse" />
-                </div>
-                <p className="text-[14px] sm:text-[15px] font-medium text-zinc-200 leading-relaxed">
+              {/* Body Content with vertical centering & generous padding */}
+              <div className="my-auto py-3">
+                <p className="text-[14px] sm:text-[15px] text-zinc-200 font-medium leading-relaxed tracking-normal">
                   "{message.content}"
                 </p>
               </div>
 
-              <div className="flex items-center justify-between text-[11px] text-zinc-500 border-t border-white/5 pt-3 mt-2">
-                <span>Anonymous Signal</span>
+              {/* Bottom Footer metadata */}
+              <div className="flex items-center justify-between text-[11px] text-zinc-500 pt-3 border-t border-white/[0.06]">
+                <span>Anonymous Message</span>
                 <span className="font-mono text-zinc-600">Swipe →</span>
               </div>
             </div>
@@ -109,16 +109,16 @@ export const CardSwipeCarousel = ({
         ))}
       </Swiper>
 
-      {/* Navigation Arrow Controls */}
-      <div className="flex items-center justify-center gap-4 mt-2">
+      {/* Navigation Controls */}
+      <div className="flex items-center justify-center gap-4 mt-1">
         <button
-          className="swiper-button-prev-custom p-2 rounded-full bg-zinc-900 border border-white/10 text-zinc-400 hover:text-white hover:bg-zinc-800 transition-all cursor-pointer disabled:opacity-30"
+          className="swiper-button-prev-custom p-2.5 rounded-full bg-zinc-900 border border-white/[0.08] text-zinc-400 hover:text-white hover:bg-zinc-800 transition-all cursor-pointer disabled:opacity-30"
           aria-label="Previous card"
         >
           <ChevronLeftIcon className="h-4 w-4" />
         </button>
         <button
-          className="swiper-button-next-custom p-2 rounded-full bg-zinc-900 border border-white/10 text-zinc-400 hover:text-white hover:bg-zinc-800 transition-all cursor-pointer disabled:opacity-30"
+          className="swiper-button-next-custom p-2.5 rounded-full bg-zinc-900 border border-white/[0.08] text-zinc-400 hover:text-white hover:bg-zinc-800 transition-all cursor-pointer disabled:opacity-30"
           aria-label="Next card"
         >
           <ChevronRightIcon className="h-4 w-4" />
