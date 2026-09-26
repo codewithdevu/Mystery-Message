@@ -63,7 +63,8 @@ const MessageCard = ({ message, onMessageDelete }: MessageCardProps) => {
             <Button 
               variant="ghost" 
               size="icon" 
-              className="h-7 w-7 text-zinc-600 hover:text-zinc-300 hover:bg-white/[0.06] opacity-0 group-hover:opacity-100 transition-opacity"
+              className="h-7 w-7 text-zinc-400 hover:text-zinc-200 hover:bg-white/[0.06] opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity shrink-0"
+              aria-label="Delete message"
             >
               <X className="w-3.5 h-3.5" />
             </Button>
