@@ -51,7 +51,7 @@ export default function VerifyAccount() {
 
   return (
     <div className="flex justify-center items-center min-h-screen px-4">
-      <div className="w-full max-w-md p-8 space-y-8 bg-zinc-900 border border-white/[0.08] rounded-xl">
+      <div className="w-full max-w-md p-8 space-y-8 bg-zinc-900 border border-white/8 rounded-xl">
         <div className="text-center">
           <h1 className="text-2xl font-semibold tracking-tight text-zinc-50 mb-2">
             Verify your account
@@ -71,7 +71,7 @@ export default function VerifyAccount() {
                     <Input 
                       placeholder="Enter code" 
                       {...field}
-                      className="bg-zinc-800/50 border-white/[0.08] text-zinc-200 placeholder:text-zinc-600 text-[14px] h-10 focus-visible:ring-zinc-600 tracking-widest text-center"
+                      className="bg-zinc-800/50 border-white/8 text-zinc-200 placeholder:text-zinc-600 text-[14px] h-10 focus-visible:ring-zinc-600 tracking-widest text-center"
                     />
                   </FormControl>
                   <FormMessage />
